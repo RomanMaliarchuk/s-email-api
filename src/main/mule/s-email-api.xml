@@ -152,6 +152,7 @@ output application/json
 		<logger level="INFO" doc:name="Logger END" doc:id="73d72395-7502-4c96-bd9c-d26495358a67" message="END flow: get:\health:s-email-api-config"/>
     </flow>
     <flow name="post:\notification:application\json:s-email-api-config">
+		<logger level="INFO" doc:name="Logger" doc:id="295adb30-e7b2-4fd4-8c54-07369475fee8" message="START"/>
 		<flow-ref doc:name="send-email-notidication-flow" doc:id="23d4298d-dc11-49c3-9aa1-c28dad6e0db9" name="send-email-notidication-flow"/>
     </flow>
 </mule>
