@@ -1,0 +1,7 @@
+api:
+  instanceId: "19218447"
+
+httpRequest:
+  host: "ueq17esih9.execute-api.us-east-1.amazonaws.com"
+  port: "443"
+  path: "DEV"
