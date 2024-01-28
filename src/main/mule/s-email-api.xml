@@ -79,7 +79,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform>
+                <logger level="INFO" doc:name="Logger" doc:id="9e15d9a3-49c0-455c-ae5d-41bea5b67aa2" message="START"/>
+				<ee:transform>
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
