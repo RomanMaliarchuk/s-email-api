@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="32a75c41-ded4-40fa-b1c9-4927cd9ed524" >
+		<http:request-connection protocol="HTTPS" host="${httpRequest.host}" port="${httpRequest.port}" />
+	</http:request-config>
+	<flow name="send-email-notidication-flow" doc:id="71666fe5-882e-4c16-b65f-34c32e2be72f" >
+		<logger level="INFO" doc:name="Logger START" doc:id="79e80e0b-81cb-4205-a521-30e5035a49e0" message="START flow: send-email-notidication-flow"/>
+		<http:request method="POST" doc:name="Request" doc:id="69f74f24-a22e-40bc-ac6c-d21d7ede7369" config-ref="HTTP_Request_configuration" path="/${httpRequest.path}"/>
+		<ee:transform doc:name="Transform Message" doc:id="4b89f4b1-0b31-4044-9d10-f5324bcba26b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger END" doc:id="590a6b63-0c85-4f89-8ebb-a353e85d3288" message="END flow: send-email-notidication-flow"/>
+	</flow>
+</mule>

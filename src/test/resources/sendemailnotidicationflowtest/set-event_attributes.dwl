@@ -1,0 +1,30 @@
+{
+  "headers": {
+    "content-type": "application/json",
+    "client_id": "a7e6135f9c084d1a84d86c551f68fd87",
+    "client_secret": "54B890d0B5A24Eb5a25dB5f7D69088d4",
+    "user-agent": "PostmanRuntime/7.36.0",
+    "accept": "*/*",
+    "postman-token": "6b19e695-a578-49bc-884e-70d8826ffb7e",
+    "host": "localhost:8081",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "174"
+  },
+  "clientCertificate": null,
+  "method": "POST",
+  "scheme": "http",
+  "queryParams": {},
+  "requestUri": "/api/notification",
+  "queryString": "",
+  "version": "HTTP/1.1",
+  "maskedRequestPath": "/notification",
+  "listenerPath": "/api/*",
+  "relativePath": "/api/notification",
+  "localAddress": "/127.0.0.1:8081",
+  "uriParams": {},
+  "rawRequestUri": "/api/notification",
+  "rawRequestPath": "/api/notification",
+  "remoteAddress": "/127.0.0.1:65305",
+  "requestPath": "/api/notification"
+}

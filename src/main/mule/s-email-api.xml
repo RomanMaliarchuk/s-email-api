@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+   
+    <flow name="s-email-api-main">
+        <http:listener config-ref="s-email-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="s-email-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <logger level="INFO" doc:name="Logger" doc:id="9e15d9a3-49c0-455c-ae5d-41bea5b67aa2" message="START"/>
+				<ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\health:s-email-api-config">
+        <logger level="INFO" message="START flow: get:\health:s-email-api-config" doc:name="Logger START" doc:id="6678cd29-4ff8-4241-a003-3bb158c32802"/>
+		<ee:transform doc:name="Transform Message" doc:id="02f0449d-b945-40ed-bf1e-fc149c7bfdc9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/json
+---
+{
+	timestamp: now(),
+	status: "Running",
+	details: {
+		appName: app.name default "s-email-api",
+		appProperties: {
+			deployedAppName: app.name default "s-email-api",
+			muleVersion: mule.version,
+			encoding: app.encoding,
+			standalone: app.standalone,
+			workDir: app.workDir,
+			listeningHost: server.host
+		},
+		reservedProperties: {
+			javaVendor: server.javaVendor,
+			javaName: server.javaVendor,
+			javaVersion: server.javaVersion,
+			orgId:  '14014bd1-30e3-43a5-82bd-3258fc6a52aa',
+			envId: null,
+			envType: p('env'),
+			workerId: null,
+			domain: server.host,
+			fullDomain: server.host,
+			region: 'us-east-2',
+			httpPort: '8081',
+			httpsPort: '8081',
+			httpPrivatePort: '8081',
+			httpsPrivatePort: '8081',
+			muleHome: server.userHome
+		},
+		serverProperties: {
+			time: now(),
+			host: server.host,
+			ipAddr: server.ip,
+			javaVendor: server.javaVendor,
+			javaVersion: server.javaVersion,
+			osArch: server.osArch,
+			osName: server.osName,
+			osVersion: server.osVersion,
+			fileSeparator: server.fileSeparator,
+			tmpDir: server.tmpDir,
+			userDir: server.userDir,
+			userHome: server.userHome,
+			userName: server.userName
+		},
+		requestAttributes: ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger END" doc:id="73d72395-7502-4c96-bd9c-d26495358a67" message="END flow: get:\health:s-email-api-config"/>
+    </flow>
+    <flow name="post:\notification:application\json:s-email-api-config">
+		<logger level="INFO" doc:name="Logger" doc:id="295adb30-e7b2-4fd4-8c54-07369475fee8" message="START"/>
+		<flow-ref doc:name="send-email-notidication-flow" doc:id="23d4298d-dc11-49c3-9aa1-c28dad6e0db9" name="send-email-notidication-flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4acc8d3f-ff00-41cf-9c9c-ee70e5d096ca" message="END"/>
+    </flow>
+</mule>

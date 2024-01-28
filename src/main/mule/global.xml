@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	
+ 	<apikit:config name="s-email-api-config" api="resource::14014bd1-30e3-43a5-82bd-3258fc6a52aa:s-email-api:1.0.0:raml:zip:s-email-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	
+	<global-property doc:name="Global Property" doc:id="c84e60af-68a1-45ee-9be4-4e6af5b55ec9" name="mule.env" value="local" />
+	<configuration-properties doc:name="Envitonment Configuration Properties" doc:id="a45a1bb5-f251-45d1-ba56-19bc87776783" file="properties/${mule.env}-config.yaml" />
+	<configuration-properties doc:name="API Configuration Properties" doc:id="a459feec-d850-4c91-8b4f-bff749a67e55" file="properties/config.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f2e65fe5-bf0b-4736-ac0a-c5bf49cd21c3" file="properties/${mule.env}-secure-config.yaml" key="${encryption.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<api-gateway:autodiscovery apiId="${api.instanceId}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="87bb9cfe-ed4c-4e32-ade9-b510296c3029" flowRef="s-email-api-main" />
+    
+	<http:listener-config name="s-email-api-httpListenerConfig">
+        <http:listener-connection host="${httpListener.host}" port="${httpListener.port}" />
+    </http:listener-config>
+</mule>
